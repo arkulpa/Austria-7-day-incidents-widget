@@ -1,11 +1,14 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
+// icon-color: brown; icon-glyph: magic;
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
 
 // constants
 const colorDistrict = new Color('67BD6A', 1);
 const colorState = new Color('FE9305', 1);
 const colorCountry = new Color('888888', 1);
-const textColor = new Color('AAAAAA', 1);
+const textColor = colorCountry;
 const numberOfPastDays = 16 * 7;
 
 const params = args.widgetParameter;
@@ -199,7 +202,8 @@ async function createWidget(items) {
       ctx.opaque = false;
       // settings for x- and y-axis
       ctx.setTextColor(textColor);
-      ctx.setFont(Font.systemFont(34));
+
+      ctx.setFont(Font.lightSystemFont(34));
       // x axis
       ctx.setTextAlignedCenter();
       const daysPerLabel = numberOfPastDays / 4;
@@ -232,17 +236,31 @@ async function createWidget(items) {
         );
         currentTopValue -= 100;
       }
-      // lockdown #2
-      const indexOfLockDown = austriaEntries.findIndex((entry) => entry.timestamp == '03.11.');
-      console.log((chartRectangle.width / austriaEntries.length) * indexOfLockDown);
-      ctx.setStrokeColor(colorCountry);
-      ctx.setLineWidth(5);
-      const lockdownPath = new Path();
-      const lockdownX = (chartRectangle.width / austriaEntries.length) * indexOfLockDown + leftPadding;
-      lockdownPath.move(new Point(lockdownX, chartRectangle.minY));
-      lockdownPath.addLine(new Point(lockdownX, chartRectangle.maxY));
-      ctx.addPath(lockdownPath);
+      // lockdown soft
+      const indexOfLockDownSoft = austriaEntries.findIndex((entry) => entry.timestamp == '03.11.');
+
+      ctx.setStrokeColor(new Color('888888', 0.3));
+      ctx.setLineWidth(3);
+      const lockdownSoftPath = new Path();
+      const lockdownSoftX = (chartRectangle.width / austriaEntries.length) * indexOfLockDownSoft + leftPadding;
+      lockdownSoftPath.move(new Point(lockdownSoftX, chartRectangle.minY));
+      lockdownSoftPath.addLine(new Point(lockdownSoftX, chartRectangle.maxY));
+      ctx.addPath(lockdownSoftPath);
       ctx.strokePath();
+      
+      // lockdown hard
+      const indexOfLockDownHard = austriaEntries.findIndex((entry) => entry.timestamp == '17.11.');
+      if (indexOfLockDownHard >= 0) {
+        ctx.setStrokeColor(new Color('888888', 1));
+        ctx.setLineWidth(5);
+        const lockdownHardPath = new Path();
+        const lockdownHardX = (chartRectangle.width / austriaEntries.length) * indexOfLockDownHard + leftPadding;
+        lockdownHardPath.move(new Point(lockdownHardX, chartRectangle.minY));
+        lockdownHardPath.addLine(new Point(lockdownHardX, chartRectangle.maxY));
+        ctx.addPath(lockdownHardPath);
+        ctx.strokePath();
+      }
+
       // lines
       ctx.setFont(Font.systemFont(40));
       ctx.addPath(pathA);
