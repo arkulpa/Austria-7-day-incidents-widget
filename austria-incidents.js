@@ -27,6 +27,7 @@ const apiUrlTimeline = 'https://covid19-dashboard.ages.at/data/CovidFaelle_Timel
 const isSmallWidget = config.widgetFamily == 'small';
 const leftPadding = 140;
 const rightPadding = isSmallWidget ? 90 : 80;
+const fontSize = isSmallWidget ? 8 : 12;
 const topPadding = isSmallWidget ? 40 : 30;
 const bottomPadding = 60;
 
@@ -239,7 +240,7 @@ async function createWidget(items) {
       // lockdown soft
       const indexOfLockDownSoft = austriaEntries.findIndex((entry) => entry.timestamp == '03.11.');
 
-      ctx.setStrokeColor(new Color('888888', 0.3));
+      ctx.setStrokeColor(new Color('F00', 0.3));
       ctx.setLineWidth(3);
       const lockdownSoftPath = new Path();
       const lockdownSoftX = (chartRectangle.width / austriaEntries.length) * indexOfLockDownSoft + leftPadding;
@@ -251,13 +252,39 @@ async function createWidget(items) {
       // lockdown hard
       const indexOfLockDownHard = austriaEntries.findIndex((entry) => entry.timestamp == '17.11.');
       if (indexOfLockDownHard >= 0) {
-        ctx.setStrokeColor(new Color('888888', 1));
+        ctx.setStrokeColor(new Color('F00', 1));
         ctx.setLineWidth(5);
         const lockdownHardPath = new Path();
         const lockdownHardX = (chartRectangle.width / austriaEntries.length) * indexOfLockDownHard + leftPadding;
         lockdownHardPath.move(new Point(lockdownHardX, chartRectangle.minY));
         lockdownHardPath.addLine(new Point(lockdownHardX, chartRectangle.maxY));
         ctx.addPath(lockdownHardPath);
+        ctx.strokePath();
+      }
+            
+      // end of lockdown 2.0
+      const indexOfLockDown20End = austriaEntries.findIndex((entry) => entry.timestamp == '07.12.');
+      if (indexOfLockDown20End >= 0) {
+        ctx.setStrokeColor(new Color('67BD6A', 0.3));
+        ctx.setLineWidth(3);
+        const lockdown20EndPath = new Path();
+        const lockdown20EndX = (chartRectangle.width / austriaEntries.length) * indexOfLockDown20End + leftPadding;
+        lockdown20EndPath.move(new Point(lockdown20EndX, chartRectangle.minY));
+        lockdown20EndPath.addLine(new Point(lockdown20EndX, chartRectangle.maxY));
+        ctx.addPath(lockdown20EndPath);
+        ctx.strokePath();
+      }
+      
+      // lockdown 3
+      const indexOfLockDown3 = austriaEntries.findIndex((entry) => entry.timestamp == '26.12.');
+      if (indexOfLockDown3 >= 0) {
+        ctx.setStrokeColor(new Color('F00', 1));
+        ctx.setLineWidth(5);
+        const lockdown3Path = new Path();
+        const lockdown3X = (chartRectangle.width / austriaEntries.length) * indexOfLockDown3 + leftPadding;
+        lockdown3Path.move(new Point(lockdown3X, chartRectangle.minY));
+        lockdown3Path.addLine(new Point(lockdown3X, chartRectangle.maxY));
+        ctx.addPath(lockdown3Path);
         ctx.strokePath();
       }
 
@@ -284,7 +311,7 @@ async function createWidget(items) {
   const stack1 = stack.addStack();
   const text = stack1.addText(districtEntries[0].name);
   text.textColor = colorDistrict;
-  text.font = Font.systemFont(12);
+  text.font = Font.systemFont(fontSize);
   stack1.addSpacer();
   const textState = stack.addText(stateEntries[0].name);
   textState.textColor = colorState;
@@ -298,7 +325,7 @@ async function createWidget(items) {
 
 const widget = await createWidget();
 if (!config.runsInWidget) {
-  await widget.presentLarge();
+  await widget.presentSmall();
 }
 
 Script.setWidget(widget);
